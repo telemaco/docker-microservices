@@ -1,0 +1,15 @@
+hello:
+  restart: always
+  image: microservice/hello
+  ports:
+    - 5000
+  environment:
+    - "SERVICE_NAME=hello/v1"
+  command: /usr/local/bin/gunicorn -w 2 -b :5000 app:app
+web:
+  image: microservice/web
+  ports:
+    - 5000
+  environment:
+    - "SERVICE_NAME=web/v1"
+  command: /usr/local/bin/gunicorn -w 2 -b :5000 app:app

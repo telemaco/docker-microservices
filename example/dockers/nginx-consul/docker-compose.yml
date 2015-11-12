@@ -1,0 +1,45 @@
+consul:
+  image: progrium/consul
+  ports:
+    - "8300:8300"
+    - "8400:8400"
+    - "8500:8500"
+    - "8600:53/udp"
+  hostname: consul-server-1
+  environment:
+    SERVICE_NAME: consul
+    SERVICE_IGNORE: true
+  command: -server -bootstrap -advertise 10.0.2.15
+
+registrator:
+  image: gliderlabs/registrator
+  volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock"
+  hostname: registrator
+  links:
+    - consul
+  command: consul://consul:8500
+
+nginx:
+  image: andrexus/nginx-consul-template
+  ports:
+    - 80:80
+    - 443:443
+  links:
+    - consul
+  environment:
+    SERVICE_NAME: nginx
+
+foo:
+  image: tutum/hello-world
+  environment:
+    SERVICE_NAME: foo
+  ports:
+  - "80"
+
+bar:
+  image: tutum/hello-world
+  environment:
+    SERVICE_NAME: bar
+  ports:
+  - "80"

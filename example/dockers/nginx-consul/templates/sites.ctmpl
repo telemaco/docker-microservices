@@ -1,0 +1,35 @@
+upstream hello {
+  least_conn;
+  {{range service "hello/v1"}}server {{ with node .Node }}{{.Node.Address}}{{end}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
+  {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+server {
+  listen 80;
+  server_name hello.api.dev;
+
+  location / {
+    proxy_pass http://hello;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}
+
+upstream web {
+  least_conn;
+  {{range service "web/v1"}}server {{ with node .Node }}{{.Node.Address}}{{end}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;
+  {{else}}server 127.0.0.1:65535; # force a 502{{end}}
+}
+
+server {
+  listen 80;
+  server_name web.api.dev;
+
+  location / {
+    proxy_pass http://web;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+}
