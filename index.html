@@ -461,6 +461,28 @@ docker info
         </section>
 
         <section>
+          <h1>Levantamos los servicios</h1>
+          <pre>
+            <code class="bash" data-trim>
+# Metemos en /etc/hosts los dominios hello.api.dev 
+# y web.api.dev apuntando a la ip de master
+
+docker-compose up -d
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h1>Escalamos el servicios</h1>
+          <pre>
+            <code class="bash" data-trim>
+docker-compose scale hello=3
+docker-compose scale web=2
+            </code>
+          </pre>
+        </section>
+
+        <section>
           <h1>¿Preguntas?</h1>
         </section>
 
